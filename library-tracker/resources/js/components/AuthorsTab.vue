@@ -12,13 +12,15 @@
       </div>
     </v-card-title>
 
-    <v-data-table
+    <v-data-table-server
       class="elevation-1"
       :headers="headers"
-      :items-per-page-options="[25, 50, 100]"
-      :items-per-page="25"
       :items="authors"
+      :items-length="totalItems"
       :loading="loading"
+      @update:options="loadItems"
+      :items-per-page-options="[5, 10, 20]"
+      :items-per-page="5"
     >
       <template #loading>
         <v-sheet class="pa-4 text-center">Loading authors...</v-sheet>
@@ -43,7 +45,7 @@
           />
         </div>
       </template>
-    </v-data-table>
+    </v-data-table-server>
 
     <!-- Add / Edit Dialog -->
     <v-dialog persistent v-model="dialog.open" max-width="640">
@@ -101,7 +103,14 @@ export default {
 
   data () {
     return {
+      totalItems: 0,
       loading: false,
+      pagination: {
+        page: 1,
+        per_page: 5,
+        column: 'id',
+        order: 'DESC'
+      },  
       authors: [],
       headers: [
         { title: 'ID', key: 'id' },
@@ -128,13 +137,33 @@ export default {
     loadAuthors () {
       this.loading = true;
 
-      return axios.get('/api/v1/authors')
-        .then(r => this.authors = r.data)
+      return axios.get('/api/v1/authors', {params: this.pagination})
+        .then(r => {
+          this.authors = r.data.data;
+          this.totalItems = r.data.total;
+        })
         .catch(e => {
           toast(e.response?.data?.message || e.response?.statusText || 'Error', {type: 'error'});
           console.error(e);
         })
         .finally(() => this.loading = false);
+    },
+
+    loadItems ({ page, itemsPerPage, sortBy }) {
+      const column = sortBy[0]?.key;
+      const order = sortBy[0]?.order;
+
+      if (column) {
+        this.pagination.column = column;
+      }
+
+      if (order) {
+        this.pagination.order = order;
+      }
+
+      this.pagination.page = page;
+      this.pagination.per_page = itemsPerPage;
+      this.loadAuthors();
     },
 
     dialogInit (form) {

@@ -17,6 +17,8 @@
     >
       <template #item.loaned_at="{item}">
         {{ moment(item.loaned_at).format('MMM Do YYYY \\a\\t h:mm A') }}
+        <br>
+        {{ item.due_at ? 'Overdue' : 'Due in ' moment(item.due_at).format('MMM Do YYYY \\a\\t h:mm A') }}
       </template>
 
       <template #item.returned_at="{item}">

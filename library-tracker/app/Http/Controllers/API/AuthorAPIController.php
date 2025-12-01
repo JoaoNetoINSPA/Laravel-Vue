@@ -9,13 +9,17 @@ use App\Http\Controllers\Controller;
 
 class AuthorAPIController extends Controller
 {
-    public function getIndex(?int $id = null)
+    public function getIndex(Request $request, ?int $id = null)
     {
         if ($id) {
             return Author::find($id);
         }
 
-        return Author::orderBy('id', 'DESC')->get();
+        $page = $request->per_page ?? 5;
+        $columns = $request->column ?? 'id';
+        $order = $request->order ?? 'DESC';
+
+        return Author::orderBy($columns, $order)->paginate($page);
     }
 
     public function postIndex(Request $request) {

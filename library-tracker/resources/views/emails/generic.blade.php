@@ -1,7 +1,7 @@
 <p>Hello ...</p>
 
 <p>
-    This is a friendly reminder that simplicity is the essence of happiness.
+    This is a friendly reminder that you have Overdue Books
 </p>
 
 <p>

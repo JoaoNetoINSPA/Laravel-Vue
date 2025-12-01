@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\BookGenre;
 use App\Models\{Author, Book};
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
@@ -13,16 +14,7 @@ class BookSeeder extends Seeder
         $faker = Faker::create();
 
         $author_ids = Author::pluck('id')->toArray();
-        $genres = [
-            'Fiction',
-            'Non-Fiction',
-            'Fantasy',
-            'Science Fiction',
-            'Mystery',
-            'Romance',
-            'Biography',
-            'History',
-        ];
+        $genres = BookGenre::values();
 
         foreach (range(1, 50) as $index) {
             Book::create([
